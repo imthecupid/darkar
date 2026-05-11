@@ -43,6 +43,16 @@ const clampNum = (v) => {
   return Number.isFinite(n) ? n : undefined
 }
 
+const telHref = (phone) => {
+  const raw = String(phone ?? "").trim()
+  if (!raw) return ""
+  const cleaned = raw.replace(/[^\d+]/g, "")
+  const normalized = cleaned.startsWith("+") ? `+${cleaned.slice(1).replace(/[^\d]/g, "")}` : cleaned.replace(/[^\d]/g, "")
+  const digits = normalized.replace(/[^\d]/g, "")
+  if (digits.length < 6) return ""
+  return `tel:${normalized}`
+}
+
 const imgUrl = (prompt, imageSize = "landscape_16_9") => {
   const encoded = encodeURIComponent(prompt)
   return `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encoded}&image_size=${imageSize}`
@@ -114,6 +124,9 @@ const DICT = {
     listingPhotos: "Photos",
     uploadListingPhotos: "Upload photos",
     photosRequired: "Please upload at least 1 photo.",
+    phone: "Phone",
+    phoneOptional: "Phone (optional)",
+    call: "Call",
     bioPlaceholder: "Add a phone number or any contact info you want to share publicly…",
     bioEmpty: "No contact info provided.",
     saveBio: "Save bio",
@@ -312,6 +325,9 @@ const DICT = {
     listingPhotos: "الصور",
     uploadListingPhotos: "رفع صور",
     photosRequired: "يرجى رفع صورة واحدة على الأقل.",
+    phone: "الهاتف",
+    phoneOptional: "الهاتف (اختياري)",
+    call: "اتصال",
     bioPlaceholder: "اكتب رقم الهاتف أو أي وسيلة تواصل تريد مشاركتها بشكل عام…",
     bioEmpty: "لا توجد معلومات تواصل.",
     saveBio: "حفظ النبذة",
@@ -1074,6 +1090,7 @@ const listingService = {
       city: listing.city,
       district: listing.district || "",
       addressLine: listing.addressLine || "",
+      phone: listing.phone || "",
       areaUnit: listing.areaUnit || "",
       bedrooms: listing.propertyType === "land" || listing.propertyType === "vehicle" ? undefined : listing.bedrooms ?? 0,
       bathrooms: listing.propertyType === "land" || listing.propertyType === "vehicle" ? undefined : listing.bathrooms ?? 0,
@@ -1618,6 +1635,7 @@ const ListingPage = async ({ params }) => {
   const seller = db.getUsers().find((u) => u.id === listing.ownerUserId) ?? null
   const sellerName = seller?.name ?? t("seller")
   const sellerBio = String(seller?.bio ?? "").trim()
+  const callHref = telHref(listing.phone)
 
   const saveBtn = el("button", { class: "Btn", type: "button" }, [isSaved ? t("savedBtn") : t("save")])
   saveBtn.addEventListener("click", async () => {
@@ -1664,6 +1682,8 @@ const ListingPage = async ({ params }) => {
       ],
     })
   })
+
+  const callBtn = callHref ? el("a", { class: "Btn", href: callHref }, [t("call")]) : null
 
   const typeValue = typeLabel(listing.propertyType)
   const unit = String(listing.areaUnit ?? "").trim() || t("sqm")
@@ -1736,7 +1756,7 @@ const ListingPage = async ({ params }) => {
             ]),
           ]),
         ]),
-        el("div", { class: "StickyFooter" }, [el("div", { class: "BtnRow" }, [saveBtn, contactBtn])]),
+        el("div", { class: "StickyFooter" }, [el("div", { class: "BtnRow" }, [saveBtn, callBtn, contactBtn].filter(Boolean))]),
       ])
     )
   }
@@ -1908,6 +1928,7 @@ const SellFormPage = async ({ params }) => {
   const district = el("input", { class: "Input", placeholder: t("districtPlaceholder"), value: existing?.district ?? "" })
   const districtField = el("div", { class: "Field", style: "display:none" }, [el("div", { class: "Label", text: t("district") }), district])
   const addressLine = el("input", { class: "Input", placeholder: t("neighborhood"), value: existing?.addressLine ?? "" })
+  const phone = el("input", { class: "Input", placeholder: t("phoneOptional"), value: existing?.phone ?? "", type: "tel", autocomplete: "tel" })
   const description = el("textarea", { class: "TextArea", placeholder: t("describePlaceholder"), value: existing?.description ?? "" })
   let photos = Array.isArray(existing?.photoUrls) ? existing.photoUrls.slice() : []
   const photoInput = el("input", { type: "file", accept: "image/*", multiple: "multiple", style: "display:none" })
@@ -2091,6 +2112,7 @@ const SellFormPage = async ({ params }) => {
         city: city.value.trim(),
         district: isGovernorateName(city.value) ? district.value.trim() : "",
         addressLine: addressLine.value.trim(),
+        phone: phone.value.trim(),
         bedrooms: clampInt(bedrooms.value),
         bathrooms: clampInt(bathrooms.value),
         areaUnit: "",
@@ -2141,6 +2163,7 @@ const SellFormPage = async ({ params }) => {
         renderGovernorateDatalist(governorateListId),
         districtField,
         el("div", { class: "Field" }, [el("div", { class: "Label", text: t("neighborhood") }), addressLine]),
+        el("div", { class: "Field" }, [el("div", { class: "Label", text: t("phone") }), phone]),
         photoInput,
         el("div", { class: "Field" }, [
           el("div", { class: "Label", text: t("listingPhotos") }),
