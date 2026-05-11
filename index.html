@@ -17,15 +17,11 @@
     <div id="app" class="AppShell">
       <header class="TopBar">
         <a class="Brand" href="#/">
-          <span class="BrandMark" aria-hidden="true"></span>
-          <span class="BrandText">HomeHarbor</span>
+          <img class="BrandLogo" src="./assets/logo.png" alt="HomeHarbor" />
         </a>
         <div class="TopActions">
-          <button class="IconButton" id="globalSearchBtn" type="button" aria-label="Search">
-            <span aria-hidden="true">⌕</span>
-          </button>
-          <button class="IconButton" id="accountBtn" type="button" aria-label="Account">
-            <span aria-hidden="true">⟡</span>
+          <button class="LangButton" id="langBtn" type="button" aria-label="Language">
+            EN
           </button>
         </div>
       </header>
@@ -34,24 +30,35 @@
 
       <nav class="BottomNav" aria-label="Primary">
         <a class="NavItem" href="#/" data-nav="explore">
-          <span class="NavIcon" aria-hidden="true">⌂</span>
+          <span class="NavIcon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-8.5z" /></svg
+          ></span>
           <span class="NavLabel">Explore</span>
         </a>
-        <a class="NavItem" href="#/search" data-nav="search">
-          <span class="NavIcon" aria-hidden="true">⌕</span>
-          <span class="NavLabel">Search</span>
+        <a class="NavItem" href="#/inquiries" data-nav="inquiries">
+          <span class="NavIcon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path
+                d="M7.5 18.5 4 20V6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8A2.5 2.5 0 0 1 17.5 17h-7.6l-2.4 1.5z"
+              /></svg
+          ></span>
+          <span class="NavLabel">Messages</span>
         </a>
         <a class="NavItem NavPrimary" href="#/sell/new" data-nav="sell">
           <span class="NavIcon" aria-hidden="true">＋</span>
           <span class="NavLabel">Sell</span>
         </a>
         <a class="NavItem" href="#/favorites" data-nav="favorites">
-          <span class="NavIcon" aria-hidden="true">⟡</span>
+          <span class="NavIcon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M7 4h10a1 1 0 0 1 1 1v16l-6-3-6 3V5a1 1 0 0 1 1-1z" /></svg
+          ></span>
           <span class="NavLabel">Saved</span>
         </a>
-        <a class="NavItem" href="#/inquiries" data-nav="inquiries">
-          <span class="NavIcon" aria-hidden="true">✦</span>
-          <span class="NavLabel">Inquiries</span>
+        <a class="NavItem" href="#/account" data-nav="account" id="accountNav">
+          <span class="NavIcon" aria-hidden="true">👤</span>
+          <span class="NavLabel">Account</span>
         </a>
       </nav>
     </div>
